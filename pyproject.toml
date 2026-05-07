@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "preflight"
+version = "1.0.0"
+description = "Concurrent dev-environment health checks with live Rich UI and AI failure analysis"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "iamgeetarted", email = "marktimothydorsey@gmail.com"}]
+keywords = ["cli", "devtools", "health", "checks", "async", "ci", "dx"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX",
+    "Topic :: Software Development",
+    "Topic :: Utilities",
+    "Environment :: Console",
+]
+dependencies = [
+    "rich>=12.0",
+    "anthropic>=0.20.0",
+]
+
+[project.optional-dependencies]
+yaml = ["pyyaml>=6.0"]
+dev = ["pytest>=7.0", "pytest-asyncio>=0.21"]
+
+[project.scripts]
+preflight = "preflight.cli:entry_point"
+
+[project.entry_points."preflight.checks"]
+# Example: my_plugin = "mypkg.checks:my_check_factory"
+
+[project.urls]
+Homepage = "https://github.com/iamgeetarted/preflight"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
