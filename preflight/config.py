@@ -18,6 +18,7 @@ class CheckSpec:
     tags: list[str] = field(default_factory=list)
     env: dict[str, str] = field(default_factory=dict)
     enabled: bool = True
+    retry: int = 0             # number of retry attempts on failure
 
 
 @dataclass
@@ -39,6 +40,7 @@ def _parse_check(raw: dict[str, Any]) -> CheckSpec:
         tags=list(raw.get("tags", [])),
         env={str(k): str(v) for k, v in raw.get("env", {}).items()},
         enabled=bool(raw.get("enabled", True)),
+        retry=int(raw.get("retry", 0)),
     )
 
 

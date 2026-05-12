@@ -6,6 +6,61 @@
 
 ---
 
+## What's New in v1.1.0
+
+### 1. Retry failed checks (`--retry N`)
+
+Flaky network checks and slow test suites no longer cause false alarms. `--retry N` re-runs each failed or errored check up to N additional times with exponential backoff (1s → 2s → 4s → 8s max).
+
+```bash
+# Retry each failure up to 3 times before giving up
+preflight --retry 3
+
+# Per-check retry in config
+[[checks]]
+name  = "Service healthcheck"
+run   = "curl -sf http://localhost:8080/health"
+retry = 2
+```
+
+The live dashboard shows `(attempt 2)` / `(attempt 3)` in the detail column so you know when retries are happening.
+
+### 2. Structured output (`--format json|markdown`)
+
+Export a machine-readable or human-shareable report — perfect for CI pipelines that need an artifact or Slack/GitHub PR comments.
+
+```bash
+# JSON report for CI artifact upload
+preflight --format json -o preflight-report.json
+
+# Markdown report for a GitHub PR comment
+preflight --format markdown -o preflight.md
+```
+
+JSON structure:
+```json
+{
+  "generated_at": "2024-01-15T08:23:01Z",
+  "total_elapsed_s": 12.4,
+  "summary": {"total": 6, "passed": 5, "failed": 1, "skipped": 0},
+  "checks": [{"name": "Lint", "status": "failed", "elapsed_s": 3.1, "attempts": 2, ...}]
+}
+```
+
+### 3. Continuous watch mode (`--watch SECS`)
+
+Re-run all checks every N seconds — turn preflight into a continuous dev-environment health monitor. The dashboard refreshes in-place, making it easy to watch green/red state flip as you iterate.
+
+```bash
+# Re-run every 60 seconds
+preflight --watch 60
+
+# Watch only fast checks
+preflight --tags env,lint --watch 30
+```
+
+---
+
 ## Features
 
 - **Full async concurrency** — all checks run simultaneously via `asyncio.TaskGroup` with a configurable concurrency cap

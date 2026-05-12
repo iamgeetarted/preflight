@@ -111,7 +111,9 @@ class LiveDashboard:
                     out = (r.stdout or r.stderr)[:80].replace("\n", " ")
                     detail = out
                 elif r.status in (Status.FAILED, Status.ERROR):
-                    detail = r.error_msg or (r.stderr or r.stdout)[:80].replace("\n", " ")
+                    retry_tag = f" [dim](attempt {r.attempts})[/dim]" if r.attempts > 1 else ""
+                    base = r.error_msg or (r.stderr or r.stdout)[:80].replace("\n", " ")
+                    detail = base + retry_tag
 
                 elapsed = _elapsed_str(r.elapsed)
                 t.add_row(icon, name, elapsed, detail)
